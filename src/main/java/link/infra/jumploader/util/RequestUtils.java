@@ -3,7 +3,7 @@ package link.infra.jumploader.util;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import link.infra.jumploader.Jumploader;
+import link.infra.jumploader.JumpQuilt;
 
 import java.io.*;
 import java.net.*;
@@ -14,7 +14,7 @@ public class RequestUtils {
 
 	public static JsonElement getJson(URL requestUrl) throws IOException {
 		URLConnection conn = requestUrl.openConnection();
-		conn.setRequestProperty("User-Agent", Jumploader.USER_AGENT);
+		conn.setRequestProperty("User-Agent", JumpQuilt.USER_AGENT);
 		conn.setRequestProperty("Accept", "application/json");
 
 		try (InputStream res = conn.getInputStream(); InputStreamReader isr = new InputStreamReader(res)) {
@@ -26,7 +26,7 @@ public class RequestUtils {
 	public static int postJsonForResCode(URL requestUrl, JsonElement requestData) throws IOException {
 		HttpURLConnection conn = (HttpURLConnection) requestUrl.openConnection();
 		conn.setDoOutput(true);
-		conn.setRequestProperty("User-Agent", Jumploader.USER_AGENT);
+		conn.setRequestProperty("User-Agent", JumpQuilt.USER_AGENT);
 		conn.setRequestProperty("Content-Type", "application/json");
 		conn.setRequestProperty("Accept", "application/json");
 
@@ -40,7 +40,7 @@ public class RequestUtils {
 
 	public static String getString(URL requestUrl) throws IOException {
 		URLConnection conn = requestUrl.openConnection();
-		conn.setRequestProperty("User-Agent", Jumploader.USER_AGENT);
+		conn.setRequestProperty("User-Agent", JumpQuilt.USER_AGENT);
 		conn.setRequestProperty("Accept", "text/plain");
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

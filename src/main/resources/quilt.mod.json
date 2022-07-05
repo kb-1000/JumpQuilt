@@ -1,0 +1,31 @@
+{
+    "schema_version": 1,
+    "quilt_loader": {
+        "group": "de.kb1000",
+        "id": "jumpquilt",
+        "version": "${version}",
+        "metadata": {
+            "name": "JumpQuilt",
+            "description": "Allows the use of Quilt mods in Twitch modpacks, by loading Quilt as if it were a Forge mod.",
+            "contributors": {
+                "kb1000": "Owner",
+                "comp500": "Original author"
+            },
+            "contact": {
+                "homepage": "https://github.com/kb-1000/JumpQuilt",
+                "issues": "https://github.com/kb-1000/JumpQuilt/issues",
+                "sources": "https://github.com/kb-1000/JumpQuilt"
+            },
+            "icon": "assets/jumpquilt/icon-128.png"
+        },
+        "intermediate_mappings": "net.fabricmc:intermediary",
+        "entrypoints": {
+        },
+        "depends": [
+            {
+                "id": "quilt_loader",
+                "versions": ">=0.17.0"
+            }
+        ]
+    }
+}

@@ -3,6 +3,7 @@ package link.infra.jumploader.resolution.ui;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
@@ -30,7 +31,7 @@ public class Window implements Component {
 		// Initialise GLFW
 		GLFWErrorCallback.createPrint(System.err).set();
 		if (!GLFW.glfwInit()) {
-			throw new IllegalStateException("Failed to initialise GLFW for Jumploader status");
+			throw new IllegalStateException("Failed to initialise GLFW for JumpQuilt status");
 		}
 
 		// Configure GLFW
@@ -39,9 +40,9 @@ public class Window implements Component {
 		GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE);
 
 		// Create the window
-		windowPtr = GLFW.glfwCreateWindow(winWidth, winHeight, "Jumploader", MemoryUtil.NULL, MemoryUtil.NULL);
+		windowPtr = GLFW.glfwCreateWindow(winWidth, winHeight, "JumpQuilt", MemoryUtil.NULL, MemoryUtil.NULL);
 		if (windowPtr == MemoryUtil.NULL) {
-			throw new RuntimeException("Failed to create a window for Jumploader status");
+			throw new RuntimeException("Failed to create a window for JumpQuilt status");
 		}
 
 		try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -58,18 +59,23 @@ public class Window implements Component {
 				int yPos = (vidmode.height() - height.get(0)) / 2;
 				GLFW.glfwSetWindowPos(windowPtr, xPos, yPos);
 			}
+			// Set up the GL context
+			GLFW.glfwMakeContextCurrent(windowPtr);
+			GL.createCapabilities();
 
 			GLFW.glfwSetWindowRefreshCallback(windowPtr, window -> redraw());
 			GLFW.glfwSetWindowSizeCallback(windowPtr, this::windowSizeChanged);
 			GLFW.glfwSetFramebufferSizeCallback(windowPtr, this::framebufferSizeChanged);
+
+			GLFW.glfwGetWindowSize(windowPtr, width, height);
+			windowSizeChanged(windowPtr, width.get(0), height.get(0));
+			GLFW.glfwGetFramebufferSize(windowPtr, width, height);
+			framebufferSizeChanged(windowPtr, width.get(0), height.get(0));
 		}
 	}
 
 	@Override
 	public void init() {
-		// Set up the GL context
-		GLFW.glfwMakeContextCurrent(windowPtr);
-		GL.createCapabilities();
 
 		GLFW.glfwSwapInterval(1);
 		GLFW.glfwShowWindow(windowPtr);

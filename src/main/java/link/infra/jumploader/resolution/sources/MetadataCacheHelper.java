@@ -96,7 +96,7 @@ public class MetadataCacheHelper {
 	}
 
 	public MetadataCacheHelper(ParsedArguments args) throws IOException {
-		cacheFolderPath = args.gameDir.resolve(".jumploader").resolve("metacache");
+		cacheFolderPath = args.gameDir.resolve(".jumpquilt").resolve("metacache");
 		Files.createDirectories(cacheFolderPath);
 		cacheIndexPath = cacheFolderPath.resolve("index.json");
 

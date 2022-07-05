@@ -83,7 +83,8 @@ public class ParsedArguments {
 
 	/**
 	 * In a Twitch environment, the game version is usually forge-... which looks confusing to users, as
-	 * it shows up as forge-.../fabric/Fabric in the F3 menu. Here, we replace it with Jumploader.
+	 * it shows up as forge-.../fabric/Fabric in the F3 menu.
+	 * Here, we replace it with JumpQuilt.
 	 */
 	private static void replaceTwitchBrand(String version, List<String> argsList, Path gameDir) {
 		// Detect if the version name is a Forge version
@@ -101,12 +102,12 @@ public class ParsedArguments {
 		} else {
 			return;
 		}
-		// Replace the version with Jumploader
+		// Replace the version with JumpQuilt
 		for (int i = 0; i < argsList.size(); i++) {
 			if (argsList.get(i).equals("--version")) {
 				i++;
 				if (i < argsList.size()) {
-					argsList.set(i, "Jumploader");
+					argsList.set(i, "JumpQuilt");
 				}
 			}
 		}

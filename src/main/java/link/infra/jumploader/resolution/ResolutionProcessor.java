@@ -1,6 +1,6 @@
 package link.infra.jumploader.resolution;
 
-import link.infra.jumploader.Jumploader;
+import link.infra.jumploader.JumpQuilt;
 import link.infra.jumploader.resolution.download.BytesReportingInputStream;
 import link.infra.jumploader.resolution.download.DownloadWorkerManager;
 import link.infra.jumploader.resolution.download.PreDownloadCheck;
@@ -108,7 +108,7 @@ public class ResolutionProcessor {
 					Files.createDirectories(jar.path.getParent());
 
 					URLConnection conn = jar.url.openConnection();
-					conn.setRequestProperty("User-Agent", Jumploader.USER_AGENT);
+					conn.setRequestProperty("User-Agent", JumpQuilt.USER_AGENT);
 					conn.setRequestProperty("Accept", "application/octet-stream");
 
 					int contentLength = conn.getContentLength();
@@ -139,7 +139,7 @@ public class ResolutionProcessor {
 						} catch (InterruptedException ex) {
 							throw new RuntimeException(ex);
 						}
-						ErrorMessages.showFatalMessage("Jumploader failed to load", "Hash mismatch for " +
+						ErrorMessages.showFatalMessage("JumpQuilt failed to load", "Hash mismatch for " +
 							e.downloadUrl + "\r\nExpected " + e.expectedHash + " but found " + e.hashFound + ".\r\nIs your internet connection working?", LOGGER);
 						throw new RuntimeException("Failed to download jar");
 					} catch (IOException e) {
@@ -193,7 +193,7 @@ public class ResolutionProcessor {
 						} catch (InterruptedException ex) {
 							throw new RuntimeException(ex);
 						}
-						ErrorMessages.showFatalMessage("Jumploader failed to load", "Hash mismatch for " +
+						ErrorMessages.showFatalMessage("JumpQuilt failed to load", "Hash mismatch for " +
 							e.downloadUrl + "\r\nExpected " + e.expectedHash + " but found " + e.hashFound + ".\r\nIs your internet connection working?", LOGGER);
 						guiManager.cleanup();
 						throw new RuntimeException("Failed to download jar");

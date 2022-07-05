@@ -9,7 +9,7 @@ public class SourcesRegistry {
 	private static final Map<String, ResolvableJarSource<?>> sources = new HashMap<>();
 	static {
 		sources.put("minecraft", new MinecraftJarSource());
-		sources.put("fabric", new FabricJarSource());
+		sources.put("quilt", new QuiltJarSource());
 		sources.put("folder", new FolderJarSource());
 	}
 
@@ -18,6 +18,6 @@ public class SourcesRegistry {
 	}
 
 	public static List<String> getDefaultSources() {
-		return Arrays.asList("minecraft", "fabric");
+		return Arrays.asList("minecraft", "quilt");
 	}
 }

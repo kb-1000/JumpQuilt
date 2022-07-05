@@ -16,64 +16,66 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FabricJarSource implements ResolvableJarSource<FabricJarSource.FabricInvalidationKey> {
-	public static class FabricInvalidationKey implements MetadataCacheHelper.InvalidationKey<FabricInvalidationKey> {
+public class QuiltJarSource implements ResolvableJarSource<QuiltJarSource.QuiltInvalidationKey> {
+	public static class QuiltInvalidationKey implements MetadataCacheHelper.InvalidationKey<QuiltInvalidationKey> {
 		public final String gameVersion;
 		public final Side side;
-		public final String pinnedFabricVersion;
+		public final String pinnedQuiltVersion;
 
-		protected FabricInvalidationKey(String gameVersion, Side side, String pinnedFabricVersion) {
+		protected QuiltInvalidationKey(String gameVersion, Side side, String pinnedQuiltVersion) {
 			this.gameVersion = gameVersion;
 			this.side = side;
-			this.pinnedFabricVersion = pinnedFabricVersion;
+			this.pinnedQuiltVersion = pinnedQuiltVersion;
 		}
 
 		@Override
-		public boolean isValid(FabricInvalidationKey key) {
-			return equals(key) && key.pinnedFabricVersion != null;
+		public boolean isValid(QuiltInvalidationKey key) {
+			return equals(key) && key.pinnedQuiltVersion != null;
 		}
 
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
 			if (o == null || getClass() != o.getClass()) return false;
-			FabricInvalidationKey that = (FabricInvalidationKey) o;
+			QuiltInvalidationKey that = (QuiltInvalidationKey) o;
 			return Objects.equals(gameVersion, that.gameVersion) &&
 				side == that.side &&
-				Objects.equals(pinnedFabricVersion, that.pinnedFabricVersion);
+				Objects.equals(pinnedQuiltVersion, that.pinnedQuiltVersion);
 		}
 
 		@Override
 		public int hashCode() {
-			return Objects.hash(gameVersion, side, pinnedFabricVersion);
+			return Objects.hash(gameVersion, side, pinnedQuiltVersion);
 		}
 	}
 
-	private static class FabricLibraryJar {
+	private static class QuiltLibraryJar {
 		public final String mavenPath;
 		public final URL source;
 		public final String hash;
 
-		private FabricLibraryJar(String mavenPath, URL source, String hash) {
+		private QuiltLibraryJar(String mavenPath, URL source, String hash) {
 			this.mavenPath = mavenPath;
 			this.source = source;
 			this.hash = hash;
 		}
 	}
 
-	private static class FabricMetadata {
+	private static class QuiltMetadata {
 		public final String mainClass;
-		public final List<FabricLibraryJar> libs = new ArrayList<>();
+		public final List<QuiltLibraryJar> libs = new ArrayList<>();
 
-		private FabricMetadata(String mainClass) {
+		private QuiltMetadata(String mainClass) {
 			this.mainClass = mainClass;
 		}
 	}
 
+	private static final URI QUILT_MAVEN;
 	private static final URI FABRIC_MAVEN;
 
 	static {
 		try {
+			QUILT_MAVEN = new URI("https://maven.quiltmc.org/repository/release/");
 			FABRIC_MAVEN = new URI("https://maven.fabricmc.net/");
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
@@ -84,44 +86,44 @@ public class FabricJarSource implements ResolvableJarSource<FabricJarSource.Fabr
 	public MetadataResolutionResult resolve(MetadataCacheHelper.MetadataCacheView cacheView, ResolutionContext ctx) throws IOException {
 		String gameVersion = ctx.getLoadingVersion();
 		Side side = ctx.getLoadingSide();
-		FabricMetadata meta;
-		meta = cacheView.getObject("fabric.json", FabricMetadata.class, () -> {
+		QuiltMetadata meta;
+		meta = cacheView.getObject("quilt.json", QuiltMetadata.class, () -> {
 			try {
 				JsonObject latestLoaderData;
-				if (ctx.getConfigFile().pinFabricLoaderVersion != null) {
-					URL loaderJsonUrl = new URI("https", "meta.fabricmc.net", "/v2/versions/loader/" + gameVersion + "/" + ctx.getConfigFile().pinFabricLoaderVersion, null).toURL();
+				if (ctx.getConfigFile().pinQuiltLoaderVersion != null) {
+					URL loaderJsonUrl = new URI("https", "meta.quiltmc.org", "/v3/versions/loader/" + gameVersion + "/" + ctx.getConfigFile().pinQuiltLoaderVersion, null).toURL();
 					latestLoaderData = RequestUtils.getJson(loaderJsonUrl).getAsJsonObject();
 				} else {
-					URL loaderJsonUrl = new URI("https", "meta.fabricmc.net", "/v2/versions/loader/" + gameVersion, null).toURL();
+					URL loaderJsonUrl = new URI("https", "meta.quiltmc.org", "/v3/versions/loader/" + gameVersion, null).toURL();
 					JsonArray manifestData = RequestUtils.getJson(loaderJsonUrl).getAsJsonArray();
 					if (manifestData.size() == 0) {
-						throw new IOException("Failed to update configuration: no Fabric versions available!");
+						throw new IOException("Failed to update configuration: no Quilt versions available!");
 					}
 					latestLoaderData = manifestData.get(0).getAsJsonObject();
 				}
 
-				if (ctx.getConfigFile().pinFabricLoaderVersion == null) {
-					ctx.getConfigFile().pinFabricLoaderVersion = latestLoaderData.getAsJsonObject("loader").get("version").getAsString();
+				if (ctx.getConfigFile().pinQuiltLoaderVersion == null) {
+					ctx.getConfigFile().pinQuiltLoaderVersion = latestLoaderData.getAsJsonObject("loader").get("version").getAsString();
 					ctx.getConfigFile().save();
 				}
 
 				JsonObject launcherMeta = latestLoaderData.getAsJsonObject("launcherMeta");
 				JsonObject mainClass = launcherMeta.getAsJsonObject("mainClass");
 
-				FabricMetadata newMetadata = new FabricMetadata(mainClass.get(side.name).getAsString());
+				QuiltMetadata newMetadata = new QuiltMetadata(mainClass.get(side.name).getAsString());
 
 				String loaderMaven = latestLoaderData.getAsJsonObject("loader").get("maven").getAsString();
-				URL loaderMavenUrl = RequestUtils.resolveMavenPath(FABRIC_MAVEN, loaderMaven).toURL();
-				newMetadata.libs.add(new FabricLibraryJar(loaderMaven, loaderMavenUrl, RequestUtils.getSha1Hash(loaderMavenUrl)));
+				URL loaderMavenUrl = RequestUtils.resolveMavenPath(QUILT_MAVEN, loaderMaven).toURL();
+				newMetadata.libs.add(new QuiltLibraryJar(loaderMaven, loaderMavenUrl, RequestUtils.getSha1Hash(loaderMavenUrl)));
 				String intermediaryMaven = latestLoaderData.getAsJsonObject("intermediary").get("maven").getAsString();
 				URL intermediaryMavenUrl = RequestUtils.resolveMavenPath(FABRIC_MAVEN, intermediaryMaven).toURL();
-				newMetadata.libs.add(new FabricLibraryJar(intermediaryMaven, intermediaryMavenUrl, RequestUtils.getSha1Hash(intermediaryMavenUrl)));
+				newMetadata.libs.add(new QuiltLibraryJar(intermediaryMaven, intermediaryMavenUrl, RequestUtils.getSha1Hash(intermediaryMavenUrl)));
 
 				JsonObject libraries = launcherMeta.getAsJsonObject("libraries");
 				for (JsonElement library : libraries.getAsJsonArray("common")) {
 					JsonObject libraryObj = library.getAsJsonObject();
 					URL libUrl = RequestUtils.resolveMavenPath(new URI(libraryObj.get("url").getAsString()), libraryObj.get("name").getAsString()).toURL();
-					newMetadata.libs.add(new FabricLibraryJar(
+					newMetadata.libs.add(new QuiltLibraryJar(
 						libraryObj.get("name").getAsString(),
 						libUrl,
 						RequestUtils.getSha1Hash(libUrl)
@@ -135,7 +137,7 @@ public class FabricJarSource implements ResolvableJarSource<FabricJarSource.Fabr
 						continue;
 					}
 					URL libUrl = RequestUtils.resolveMavenPath(new URI(libraryObj.get("url").getAsString()), libraryObj.get("name").getAsString()).toURL();
-					newMetadata.libs.add(new FabricLibraryJar(
+					newMetadata.libs.add(new QuiltLibraryJar(
 						libraryObj.get("name").getAsString(),
 						libUrl,
 						RequestUtils.getSha1Hash(libUrl)
@@ -144,28 +146,28 @@ public class FabricJarSource implements ResolvableJarSource<FabricJarSource.Fabr
 
 				return newMetadata;
 			} catch (URISyntaxException e) {
-				throw new IOException("Failed to parse Fabric source URL", e);
+				throw new IOException("Failed to parse Quilt source URL", e);
 			}
 		});
 		cacheView.completeUpdate();
 
 		List<ResolvableJar> jars = new ArrayList<>();
-		for (FabricLibraryJar libraryJar : meta.libs) {
+		for (QuiltLibraryJar libraryJar : meta.libs) {
 			jars.add(new ResolvableJar(libraryJar.source,
 				ctx.getEnvironment().jarStorage.getLibraryMaven(libraryJar.mavenPath),
-				SHA1HashingInputStream.verifier(libraryJar.hash, libraryJar.source.toString()), "Fabric library " + libraryJar.source));
+				SHA1HashingInputStream.verifier(libraryJar.hash, libraryJar.source.toString()), "Quilt library " + libraryJar.source));
 		}
 
 		return new MetadataResolutionResult(jars, meta.mainClass);
 	}
 
 	@Override
-	public Class<FabricInvalidationKey> getInvalidationKeyType() {
-		return FabricInvalidationKey.class;
+	public Class<QuiltInvalidationKey> getInvalidationKeyType() {
+		return QuiltInvalidationKey.class;
 	}
 
 	@Override
-	public FabricInvalidationKey getInvalidationKey(ResolutionContext ctx) {
-		return new FabricInvalidationKey(ctx.getLoadingVersion(), ctx.getLoadingSide(), ctx.getConfigFile().pinFabricLoaderVersion);
+	public QuiltInvalidationKey getInvalidationKey(ResolutionContext ctx) {
+		return new QuiltInvalidationKey(ctx.getLoadingVersion(), ctx.getLoadingSide(), ctx.getConfigFile().pinQuiltLoaderVersion);
 	}
 }

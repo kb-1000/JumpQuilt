@@ -46,7 +46,7 @@ public class EnvironmentDiscoverer {
 		private final Path librariesDir;
 
 		public FallbackJarStorage(Path gameDir) {
-			Path localDir = gameDir.resolve(".jumploader");
+			Path localDir = gameDir.resolve(".jumpquilt");
 			try {
 				Files.createDirectories(localDir);
 				gameVersionsDir = localDir.resolve("versions");
@@ -54,7 +54,7 @@ public class EnvironmentDiscoverer {
 				librariesDir = localDir.resolve("libraries");
 				Files.createDirectories(librariesDir);
 			} catch (IOException e) {
-				throw new RuntimeException("Failed to create a folder for Jumploader", e);
+				throw new RuntimeException("Failed to create a folder for JumpQuilt", e);
 			}
 		}
 
@@ -158,7 +158,7 @@ public class EnvironmentDiscoverer {
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to create the config directory");
 		}
-		configFile = configDir.resolve("jumploader.json");
+		configFile = configDir.resolve("jumpquilt.json");
 
 		this.gameDir = args.gameDir;
 

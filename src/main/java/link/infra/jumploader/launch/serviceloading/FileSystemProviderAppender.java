@@ -37,7 +37,7 @@ public class FileSystemProviderAppender implements PreLaunchDispatcher.Handler {
 			final Object lock = ReflectionUtil.reflectStaticField(FileSystemProvider.class, "lock");
 			//noinspection SynchronizationOnLocalVariableOrMethodParameter
 			synchronized (lock) {
-				// Load providers from the Jumploader classloader, and add them to the FileSystemProvider list
+				// Load providers from the JumpQuilt classloader, and add them to the FileSystemProvider list
 				ReflectionUtil.<List<FileSystemProvider>>transformStaticField(FileSystemProvider.class, "installedProviders", existingProviders -> {
 					List<FileSystemProvider> newList = new ArrayList<>(existingProviders);
 					AccessController.doPrivileged((PrivilegedAction<Void>) () -> {loadProvidersFromClassLoader(loadingClassloader, newList); return null;});

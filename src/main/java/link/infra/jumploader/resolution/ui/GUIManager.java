@@ -16,15 +16,15 @@ public class GUIManager {
 	public GUIManager(DownloadWorkerManager<?> downloadWorkerManager, ParsedArguments args) {
 		window = new Window(new AdaptiveWidthContainer(
 			new DirectionLayout(Direction.VERTICAL).addChildren(
-				new Image("assets/jumploader/splashlogo.png"),
+				new Image("assets/jumpquilt/splashlogo.png"),
 				new AdaptiveWidthContainer(new ProgressBar(downloadWorkerManager::getWorkerProgress), 0.5f, 1500f)
 			)
 		), args.windowWidth, args.windowHeight);
 		window.setIcons(Arrays.asList(
-			"assets/jumploader/icon-16.png",
-			"assets/jumploader/icon-32.png",
-			"assets/jumploader/icon-48.png",
-			"assets/jumploader/icon-128.png"
+                "assets/jumpquilt/icon-16.png",
+                "assets/jumpquilt/icon-32.png",
+                "assets/jumpquilt/icon-48.png",
+                "assets/jumpquilt/icon-128.png"
 		));
 	}
 

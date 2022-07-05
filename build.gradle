@@ -15,7 +15,7 @@ apply plugin: 'maven-publish'
 
 version = project.modVersion
 group = 'link.infra.jumploader' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = 'jumploader'
+archivesBaseName = project.modBaseName
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
@@ -117,19 +117,27 @@ jar {
     manifest {
         //noinspection Annotator
         attributes([
-                "Specification-Title": "jumploader",
-                "Specification-Vendor": "comp500",
+                "Specification-Title": "jumpquilt",
+                "Specification-Vendor": "kb1000",
                 "Specification-Version": "1", // We are version 1 of ourselves
                 "Implementation-Title": project.name,
                 "Implementation-Version": "${version}",
-                "Implementation-Vendor" :"comp500",
+                "Implementation-Vendor" :"kb1000",
                 "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
     }
 }
 
 compileJava {
-    options.compilerArgs.addAll(["--release", "8"])
+    //options.compilerArgs.addAll(["--release", "8"])
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("quilt.mod.json") {
+        expand "version": project.version
+    }
 }
 
 // Example configuration to allow publishing using the maven-publish task
