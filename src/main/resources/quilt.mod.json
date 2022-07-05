@@ -16,7 +16,8 @@
                 "issues": "https://github.com/kb-1000/JumpQuilt/issues",
                 "sources": "https://github.com/kb-1000/JumpQuilt"
             },
-            "icon": "assets/jumpquilt/icon-128.png"
+            "icon": "assets/jumpquilt/icon-128.png",
+            "license": "MIT"
         },
         "intermediate_mappings": "net.fabricmc:intermediary",
         "entrypoints": {
