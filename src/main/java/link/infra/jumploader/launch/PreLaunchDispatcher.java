@@ -1,7 +1,7 @@
 package link.infra.jumploader.launch;
 
 import link.infra.jumploader.launch.serviceloading.FileSystemProviderAppender;
-import link.infra.jumploader.launch.serviceloading.JimfsURLHandlerAppender;
+import link.infra.jumploader.launch.serviceloading.QuiltFilesystemURLHandlerAppender;
 
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +13,7 @@ public class PreLaunchDispatcher {
 
 	private static final List<Handler> HANDLERS = Arrays.asList(
 		new FileSystemProviderAppender(),
-		new JimfsURLHandlerAppender()
+		new QuiltFilesystemURLHandlerAppender()
 	);
 
 	public static void dispatch(ClassLoader loadingClassloader) {
