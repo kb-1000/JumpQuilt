@@ -26,7 +26,13 @@ public class QuiltFilesystemURLHandlerAppender implements PreLaunchDispatcher.Ha
 			handlers.putIfAbsent("quilt.mfs", (URLStreamHandler) mfsHandler.getDeclaredConstructor().newInstance());
 		} catch (ClassNotFoundException ignored) {
 			// Ignore class not found - jimfs presumably isn't in the classpath
-		} catch (NoSuchFieldException | IllegalAccessException | InstantiationException | ClassCastException | NoSuchMethodException | InvocationTargetException e) {
+		} catch (ReflectiveOperationException | ClassCastException e) {
+			LOGGER.warn("Failed to fix jimfs loading, jar-in-jar may not work", e);
+		}
+
+		try {
+			ReflectionUtil.transformStaticField(URL.class, "factory", factory -> null);
+		} catch (ReflectiveOperationException e) {
 			LOGGER.warn("Failed to fix jimfs loading, jar-in-jar may not work", e);
 		}
 	}
