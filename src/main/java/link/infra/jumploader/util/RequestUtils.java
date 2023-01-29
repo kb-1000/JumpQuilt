@@ -56,14 +56,16 @@ public class RequestUtils {
 
 	public static URI resolveMavenPath(URI baseUrl, String mavenPath) {
 		String[] mavenPathSplit = mavenPath.split(":");
-		if (mavenPathSplit.length != 3) {
+		if (mavenPathSplit.length < 3 && mavenPathSplit.length > 4) {
 			throw new RuntimeException("Invalid maven path: " + mavenPath);
 		}
 		return baseUrl.resolve(
 			String.join("/", mavenPathSplit[0].split("\\.")) + "/" + // Group ID
 				mavenPathSplit[1] + "/" + // Artifact ID
 				mavenPathSplit[2] + "/" + // Version
-				mavenPathSplit[1] + "-" + mavenPathSplit[2] + ".jar"
+				mavenPathSplit[1] + "-" + mavenPathSplit[2] +
+				(mavenPathSplit.length == 4 ? "-" + mavenPathSplit[3] : "") // Artifact classifier
+				+ ".jar"
 		);
 	}
 
